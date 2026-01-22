@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ВРЕМЯ — Мой трекер свободы</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%23667eea'/%3E%3Cstop%20offset='1'%20stop-color='%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx='32'%20cy='32'%20r='26'%20fill='url(%23g)'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='21'%20fill='white'/%3E%3Cpath%20d='M32%2018v15l10%206'%20stroke='%230f172a'%20stroke-width='4'%20stroke-linecap='round'%20stroke-linejoin='round'%20fill='none'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='2.5'%20fill='%230f172a'/%3E%3C/svg%3E">
+<style>
+    :root{
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --accent1: #667eea;
+      --accent2: #764ba2;
+
+      --slave: #ef4444;
+      --waste: #f59e0b;
+      --bio: #3b82f6;
+      --mine: #10b981;
+      --conflict: #a855f7;
+
+      --chipbg: #f1f5f9;
+      --chiptext: #0f172a;
+    }
+    /* Optional dark theme (toggle) */
+    [data-theme="dark"]{
+      --bg: #0a0e1a;
+      --panel: #151b2b;
+      --text: #e8edf4;
+      --muted: #94a3b8;
+      --border: #1e293b;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --chipbg: #0f172a;
+      --chiptext: #e8edf4;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      line-height: 1.5;
+    }
+    .container{max-width: 980px; margin: 0 auto;}
+    header{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap: 12px; margin-bottom: 16px;
+    }
+    h1{
+      font-size: 28px; letter-spacing: -0.02em; line-height: 1.1;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle{color: var(--muted); font-size: 14px;}
+    .top-controls{
+      display:flex; gap: 8px; align-items:center; flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+    .banner{
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(59,130,246,0.10));
+      display:flex; justify-content:space-between; align-items:center;
+      gap: 10px; flex-wrap: wrap;
+    }
+    .banner strong{font-weight: 700;}
+    .pill{
+      display:inline-flex; gap: 8px; align-items:center;
+      padding: 6px 10px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .btn{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      transition: transform .05s ease, background .2s ease;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .btn:hover{background: rgba(100,116,139,0.08);}
+    .btn:active{transform: translateY(1px);}
+    .btn.primary{
+      border: none;
+      background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 100%);
+      color: white;
+    }
+    .btn.danger{
+      border:none;
+      background: #ef4444;
+      color:white;
+    }
+    .btn.small{padding: 8px 10px; border-radius: 10px; font-size: 13px;}
+    .btn.ghost{
+      background: transparent;
+    }
+
+    input, select{
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+    input::placeholder{color: var(--muted);}
+    .grid-2{display:grid; grid-template-columns: 1fr 1fr; gap: 10px;}
+    .grid-3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;}
+    .grid-4{display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px;}
+    @media (max-width: 880px){ .grid-4{grid-template-columns: repeat(2, 1fr);} }
+    @media (max-width: 520px){ .grid-3{grid-template-columns: 1fr;} .grid-2{grid-template-columns: 1fr;} }
+
+    .card{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(100,116,139,0.05);
+    }
+    .kpi-label{font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em;}
+    .kpi-value{font-size: 24px; font-weight: 800; margin-top: 4px;}
+    .kpi-sub{font-size: 12px; color: var(--muted); margin-top: 2px;}
+
+    .kpi-border{border-left: 4px solid transparent;}
+    .b-slave{border-left-color: var(--slave);}
+    .b-waste{border-left-color: var(--waste);}
+    .b-bio{border-left-color: var(--bio);}
+    .b-mine{border-left-color: var(--mine);}
+
+    .legend{display:flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;}
+    .dot{width: 10px; height: 10px; border-radius: 3px; display:inline-block; margin-right: 6px;}
+    .legend span{font-size: 13px; color: var(--muted);}
+
+    .timeline-wrap{
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-top: 10px;
+    }
+    .timeline{
+      display:grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 10px;
+      gap: 2px;
+      align-items: center;
+      min-width: calc(96 * 12px);
+      padding: 10px 2px 6px 2px;
+    }
+    .cell{
+      width: 10px; height: 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.05);
+      background: rgba(100,116,139,0.18);
+    }
+    [data-theme="dark"] .cell{ border-color: rgba(255,255,255,0.05); background: rgba(148,163,184,0.18); }
+    .c-slave{background: color-mix(in srgb, var(--slave) 70%, white 30%);}
+    .c-waste{background: color-mix(in srgb, var(--waste) 70%, white 30%);}
+    .c-bio{background: color-mix(in srgb, var(--bio) 70%, white 30%);}
+    .c-mine{background: color-mix(in srgb, var(--mine) 70%, white 30%);}
+    .c-conflict{
+      background: repeating-linear-gradient(
+        45deg,
+        color-mix(in srgb, var(--conflict) 70%, white 30%),
+        color-mix(in srgb, var(--conflict) 70%, white 30%) 4px,
+        rgba(255,255,255,0.2) 4px,
+        rgba(255,255,255,0.2) 8px
+      );
+    }
+    [data-theme="dark"] .c-conflict{
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(168,85,247,0.95),
+        rgba(168,85,247,0.95) 4px,
+        rgba(0,0,0,0.25) 4px,
+        rgba(0,0,0,0.25) 8px
+      );
+    }
+
+    .hour-row{
+      display:flex; justify-content: space-between; color: var(--muted);
+      font-size: 12px; margin-top: 6px;
+    }
+    .hour-row span{min-width: 32px; text-align:center;}
+    .hour-row .spacer{flex: 1;}
+    .hint{color: var(--muted); font-size: 13px; margin-top: 8px;}
+
+    .type-picker{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 2px;
+    }
+    @media (max-width: 520px){
+      .type-picker{grid-template-columns: repeat(2, 1fr);}
+    }
+    .type-btn{
+      display:flex; align-items:center; justify-content:center; gap: 8px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      font-weight: 800;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .05s ease, background .2s ease, box-shadow .2s ease;
+      white-space: nowrap;
+    }
+    .type-btn:hover{background: rgba(100,116,139,0.08);}
+    .type-btn:active{transform: translateY(1px);}
+    .type-btn.active{
+      box-shadow: 0 0 0 3px rgba(102,126,234,0.18);
+    }
+    .swatch{
+      width: 12px; height: 12px; border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .type-btn.active[data-type="slave"]{ background: color-mix(in srgb, var(--slave) 12%, var(--panel) 88%); border-color: color-mix(in srgb, var(--slave) 35%, var(--border) 65%); }
+    .type-btn.active[data-type="waste"]{ background: color-mix(in srgb, var(--waste) 12%, var(--panel) 88%); border-color: color-mix(in srgb, var(--waste) 35%, var(--border) 65%); }
+    .type-btn.active[data-type="bio"]{   background: color-mix(in srgb, var(--bio) 12%, var(--panel) 88%);   border-color: color-mix(in srgb, var(--bio) 35%, var(--border) 65%); }
+    .type-btn.active[data-type="mine"]{  background: color-mix(in srgb, var(--mine) 12%, var(--panel) 88%);  border-color: color-mix(in srgb, var(--mine) 35%, var(--border) 65%); }
+
+
+
+    .entries{
+      display:flex; flex-direction: column; gap: 8px;
+      margin-top: 12px;
+    }
+    .entry{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(100,116,139,0.05);
+      display:flex; justify-content: space-between; gap: 10px;
+      align-items:flex-start;
+    }
+    .entry .left{min-width: 0;}
+    .entry .title{font-weight: 800; margin-bottom: 4px;}
+    .entry .meta{color: var(--muted); font-size: 13px; display:flex; gap: 10px; flex-wrap: wrap;}
+    .chip{
+      display:inline-flex; align-items:center; gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--chipbg);
+      color: var(--chiptext);
+      border: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .money-pos{color: #16a34a; font-weight: 800;}
+    .money-neg{color: #ef4444; font-weight: 800;}
+
+    .weekly{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      padding: 10px 2px 2px;
+    }
+    @media (max-width: 520px){
+      .weekly{grid-template-columns: repeat(4, 1fr);}
+    }
+    .daybar{
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px;
+      background: rgba(100,116,139,0.05);
+      flex: 0 0 auto;
+    }
+    .stack{
+      height: 180px;
+      border-radius: 10px;
+      overflow:hidden;
+      background: rgba(100,116,139,0.12);
+      display:flex;
+      flex-direction: column-reverse;
+    }
+    .seg{width:100%;}
+    .seg.slave{background: color-mix(in srgb, var(--slave) 70%, white 30%);}
+    .seg.waste{background: color-mix(in srgb, var(--waste) 70%, white 30%);}
+    .seg.bio{background: color-mix(in srgb, var(--bio) 70%, white 30%);}
+    .seg.mine{background: color-mix(in srgb, var(--mine) 70%, white 30%);}
+    .seg.conflict{background: rgba(168,85,247,0.6);}
+    .daybar .lbl{margin-top: 8px; font-size: 12px; color: var(--muted); text-align:center;}
+    .daybar .sum{font-size: 12px; font-weight: 800; text-align:center; margin-top: 2px;}
+    .muted{color: var(--muted);}
+    .row-between{display:flex; justify-content:space-between; align-items:center; gap: 12px; flex-wrap: wrap;}
+    .divider{height:1px;background:var(--border);margin:12px 0;}
+    .toast{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(239,68,68,0.10);
+      color: var(--text);
+      display:none;
+    }
+  
+    /* Mobile layout */
+    @media (max-width: 700px){
+      body{padding: 10px;}
+      .panel{padding: 14px;}
+      header{align-items:flex-start;}
+      .top-controls{justify-content:flex-start;}
+      .top-controls > *{flex: 1 1 auto;}
+      #datePicker{width: 100% !important;}
+      .btn.small{width: 100%;}
+      .entry{flex-direction: column; align-items: stretch;}
+      .entry .meta{gap: 6px;}
+      .entry .left{width:100%;}
+      .entry button{width: 100%;}
+      .timeline{grid-auto-columns: 9px; min-width: calc(96 * 11px);}
+      .hour-row span{font-size: 11px;}
+    }
+
+</style>
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#667eea">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ВРЕМЯ">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+</head>
+<body>
+  <div class="container" id="app">
+    <header>
+      <div>
+        <h1>⏱ ВРЕМЯ</h1>
+        <div class="subtitle">Мой трекер свободы</div>
+      </div>
+      <div class="top-controls">
+        <input id="datePicker" type="date" class="btn" style="padding:10px 12px; border-radius:12px; width:auto;">
+        <button class="btn small" id="exportBtn">Экспорт</button>
+        <label class="btn small" style="cursor:pointer;">
+          Импорт
+          <input id="importInput" type="file" accept="application/json" style="display:none;">
+        </label>
+        <button class="btn small" id="themeBtn" title="Переключить тему">🌞</button>
+      </div>
+    </header>
+<div class="panel">
+      <div class="row-between">
+        <h3>Сводка дня</h3>
+        <div class="muted" id="dayPercent">0% дня отмечено</div>
+      </div>
+      <div class="grid-4" style="margin-top: 10px;">
+        <div class="card kpi-border b-slave">
+          <div class="kpi-label">Рабское время</div>
+          <div class="kpi-value" id="kpiSlave">0.0ч</div>
+          <div class="kpi-sub" id="kpiSlaveSub">0% дня</div>
+        </div>
+        <div class="card kpi-border b-waste">
+          <div class="kpi-label">Слитое время</div>
+          <div class="kpi-value" id="kpiWaste">0.0ч</div>
+          <div class="kpi-sub" id="kpiWasteSub">0% дня</div>
+        </div>
+        <div class="card kpi-border b-bio">
+          <div class="kpi-label">Биовремя</div>
+          <div class="kpi-value" id="kpiBio">0.0ч</div>
+          <div class="kpi-sub" id="kpiBioSub">0% дня</div>
+        </div>
+        <div class="card kpi-border b-mine">
+          <div class="kpi-label">МОЁ время</div>
+          <div class="kpi-value" id="kpiMine">0.0ч</div>
+          <div class="kpi-sub" id="kpiMineSub">0% дня</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row-between">
+        <h3>Лента дня</h3>
+      </div>
+      <div class="timeline-wrap">
+        <div class="timeline" id="timeline"></div>
+      </div>
+      <div class="hour-row" aria-hidden="true">
+        <span>00</span><span>04</span><span>08</span><span>12</span><span>16</span><span>20</span><span>24</span>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background: var(--slave)"></i>Рабское</span>
+        <span><i class="dot" style="background: var(--waste)"></i>Слитое</span>
+        <span><i class="dot" style="background: var(--bio)"></i>Био</span>
+        <span><i class="dot" style="background: var(--mine)"></i>МОЁ</span>
+        </div>
+      </div>
+
+    <div class="panel">
+      <h3>Добавить запись (интервал)</h3>
+      <div class="grid-2" style="margin-top: 10px;">
+        
+        <div>
+          <label class="muted" style="font-size:12px;">Категория</label>
+          <div id="typePicker" class="type-picker" role="radiogroup" aria-label="Категория">
+            <button type="button" class="type-btn active" data-type="slave" onclick="setType('slave')"><span class="swatch" style="background: var(--slave)"></span>Рабское</button>
+            <button type="button" class="type-btn" data-type="waste" onclick="setType('waste')"><span class="swatch" style="background: var(--waste)"></span>Слитое</button>
+            <button type="button" class="type-btn" data-type="bio" onclick="setType('bio')"><span class="swatch" style="background: var(--bio)"></span>Био</button>
+            <button type="button" class="type-btn" data-type="mine" onclick="setType('mine')"><span class="swatch" style="background: var(--mine)"></span>МОЁ</button>
+          </div>
+          <input id="type" type="hidden" value="slave">
+        </div>
+
+        <div>
+          <label class="muted" style="font-size:12px;">Примечание</label>
+          <input id="desc" type="text" placeholder="Напр.: доставка, рилсы, сон, проект, тревога…" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top: 10px;">
+        
+        <div>
+          <label class="muted" style="font-size:12px;">С</label>
+          <select id="startTime"></select>
+        </div>
+        <div>
+          <label class="muted" style="font-size:12px;">До</label>
+          <select id="endTime"></select>
+        </div>
+
+        <div>
+          <label class="muted" style="font-size:12px;">Деньги (₽)</label>
+          <input id="money" type="number" step="10" placeholder="+ или - (опционально)">
+        </div>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <button class="btn primary" id="addBtn" style="width:100%;">+ Добавить запись</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row-between">
+        <h3>Сегодня</h3>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn small ghost" id="copyYesterdayBtn" title="Скопировать вчерашний сон/базу (опционально)">Вчера → Сегодня</button>
+          <button class="btn small danger" id="clearDayBtn">Очистить день</button>
+        </div>
+      </div>
+      <div class="entries" id="entries"></div>
+      <div class="hint" id="noEntriesHint">Пока нет записей. Начни с чего угодно: сон, работа, скролл, проект.</div>
+    </div>
+
+    <div class="panel">
+      <div class="row-between">
+        <h3>Расчет денег и чистого дохода</h3>
+        <div class="muted">Главный показатель: <strong>ЧД/Ч</strong> (чистый доход в час)</div>
+      </div>
+
+      <div class="grid-4" style="margin-top: 10px;">
+        <div class="card">
+          <div class="kpi-label">Заработано сегодня</div>
+          <div class="kpi-value money-pos" id="moneyEarned">+0₽</div>
+          <div class="kpi-sub">Сумма всех “плюсов”</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Потрачено сегодня</div>
+          <div class="kpi-value money-neg" id="moneySpent">-0₽</div>
+          <div class="kpi-sub">Сумма всех “минусов”</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Баланс дня</div>
+          <div class="kpi-value" id="moneyNet">0₽</div>
+          <div class="kpi-sub">Заработано − потрачено</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">ЧД/Ч</div>
+          <div class="kpi-value" id="chdch">—</div>
+          <div class="kpi-sub">Баланс / часы рабского времени</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="kpi-label">Цена слива (в ₽)</div>
+          <div class="kpi-value" id="wasteCost">0₽</div>
+          <div class="kpi-sub">Слитые часы × ЧД/Ч</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Цена часа жизни</div>
+          <div class="kpi-value" id="lifeHour">0₽/ч</div>
+          <div class="kpi-sub">То же самое: ЧД/Ч = стоимость твоего времени сегодня</div>
+        </div>
+      </div>
+      <div class="hint">Чем выше и устойчивее ЧД/Ч — тем больше “МОЕГО времени” ты можешь выкупать обратно.</div>
+    </div>
+
+    <div class="panel">
+      <div class="row-between">
+        <h3>Неделя</h3>
+      </div>
+      <div class="weekly" id="weekly"></div>
+      
+    </div>
+
+    
+
+    <div class="panel">
+      <div class="banner" id="banner">
+        <div><strong id="bannerMain">Сегодня: 0.0ч МОЕГО времени</strong></div>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    
+</div>
+    <!-- Edit modal -->
+    <div id="modalOverlay" style="position:fixed; inset:0; background: rgba(15,23,42,0.45); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 9999;">
+      <div id="modal" style="width:min(720px, 100%); background: var(--panel); border:1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 16px;">
+        <div class="row-between" style="margin-bottom: 10px;">
+          <h3 style="margin:0;">Редактировать запись</h3>
+          <button class="btn small" id="modalCloseBtn">✕</button>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label class="muted" style="font-size:12px;">Категория</label>
+            <div id="editTypePicker" class="type-picker" role="radiogroup" aria-label="Категория">
+              <button type="button" class="type-btn" data-type="slave"><span class="swatch" style="background: var(--slave)"></span>Рабское</button>
+              <button type="button" class="type-btn" data-type="waste"><span class="swatch" style="background: var(--waste)"></span>Слитое</button>
+              <button type="button" class="type-btn" data-type="bio"><span class="swatch" style="background: var(--bio)"></span>Био</button>
+              <button type="button" class="type-btn" data-type="mine"><span class="swatch" style="background: var(--mine)"></span>МОЁ</button>
+            </div>
+            <input id="editType" type="hidden" value="slave">
+          </div>
+          <div>
+            <label class="muted" style="font-size:12px;">Примечание</label>
+            <input id="editDesc" type="text" placeholder="Коротко: что было?" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-top: 10px;">
+          <div>
+            <label class="muted" style="font-size:12px;">С</label>
+            <select id="editStart"></select>
+          </div>
+          <div>
+            <label class="muted" style="font-size:12px;">До</label>
+            <select id="editEnd"></select>
+          </div>
+          <div>
+            <label class="muted" style="font-size:12px;">Деньги (₽)</label>
+            <input id="editMoney" type="number" step="10" placeholder="+ или - (опционально)">
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap;">
+          <button class="btn primary" id="modalSaveBtn" style="flex:1 1 220px;">Сохранить</button>
+          <button class="btn" id="modalCancelBtn" style="flex:1 1 220px;">Отмена</button>
+        </div>
+
+        <div class="hint" id="modalHint" style="margin-top: 10px;"></div>
+      </div>
+    </div>
+
+
+<script>
+(function(){
+  // global fallback for category buttons
+  window.setType = function(t){
+    const hidden = document.getElementById("type");
+    if(hidden) hidden.value = t;
+    const picker = document.getElementById("typePicker");
+    if(picker){
+      [...picker.querySelectorAll(".type-btn")].forEach(b=>b.classList.toggle("active", b.dataset.type===t));
+    }
+    // clear note when switching category (to avoid mixing meanings)
+    const desc = document.getElementById("desc");
+    if(desc) desc.value = "";
+  };
+
+  const STORAGE_KEY = "vremya_freedom_v2";
+  const SLOT_MIN = 15;
+  const SLOTS_PER_DAY = 24*60/SLOT_MIN; // 96
+
+  const el = (id) => document.getElementById(id);
+
+  const app = {
+    state: null,
+    selectedDate: null
+  };
+
+  function todayKey(){
+    const d = new Date();
+    return toKey(d);
+  }
+  function toKey(d){
+    // Local date YYYY-MM-DD
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function keyToDate(key){
+    const [y,m,d] = key.split('-').map(Number);
+    return new Date(y, m-1, d);
+  }
+  function addDays(key, n){
+    const d = keyToDate(key);
+    d.setDate(d.getDate()+n);
+    return toKey(d);
+  }
+  function parseTimeToMin(t){
+    if(!t || !/^\d{2}:\d{2}$/.test(t)) return null;
+    const [h, m] = t.split(':').map(Number);
+    return h*60 + m;
+  }
+  function minToTime(min){
+    const h = Math.floor(min/60)%24;
+    const m = min%60;
+    return String(h).padStart(2,'0') + ":" + String(m).padStart(2,'0');
+  }
+  function fmtHours(min){
+    return (min/60).toFixed(1) + "ч";
+  }
+  function fmtRub(n){
+    const sign = n > 0 ? "+" : (n < 0 ? "-" : "");
+    const abs = Math.abs(Math.round(n));
+    return sign + abs.toLocaleString('ru-RU') + "₽";
+  }
+  function showToast(msg, kind="error"){
+    const t = el("toast");
+    t.style.display = "block";
+    t.textContent = msg;
+    t.style.background = kind === "ok" ? "rgba(16,185,129,0.12)" : "rgba(239,68,68,0.10)";
+    clearTimeout(showToast._tm);
+    showToast._tm = setTimeout(()=>{ t.style.display="none"; }, 3800);
+  }
+
+  function defaultState(){
+    return {
+      days: {},
+      settings: {
+        theme: "light"
+      }
+    };
+  }
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return defaultState();
+      const s = JSON.parse(raw);
+      // migrate minimal
+      if(!s.days) s.days = {};
+      if(!s.settings) s.settings = {theme:"light"};
+      return s;
+    }catch(e){
+      return defaultState();
+    }
+  }
+  function save(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(app.state));
+  }
+
+  
+  function overlaps(aStart, aEnd, bStart, bEnd){
+    // intervals in minutes on [0,1440], where end may be 1440
+    return (aStart < bEnd) && (bStart < aEnd);
+  }
+  function hasOverlap(dayKey, startMin, endMin){
+    const d = app.state.days[dayKey];
+    if(!d || !d.events) return false;
+    for(const ev of d.events){
+      const s = Math.max(0, Math.min(1440, ev.startMin));
+      const e = Math.max(0, Math.min(1440, ev.endMin));
+      if(overlaps(startMin, endMin, s, e)) return true;
+    }
+    return false;
+  }
+
+  function ensureDay(key){
+    if(!app.state.days[key]){
+      app.state.days[key] = { events: [] };
+    }
+  }
+
+  function newId(){
+    return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  }
+
+  function splitIfCrossMidnight(type, desc, startMin, endMin, money){
+    // returns array of {keyOffset, event}
+    if(endMin > startMin) {
+      return [{keyOffset:0, event:{id:newId(), type, desc, startMin, endMin, money: money||0, createdAt: Date.now()}}];
+    }
+    // crosses midnight -> split into current day [start..1440] and next day [0..end]
+    const part1 = {id:newId(), type, desc, startMin, endMin: 1440, money: money||0, createdAt: Date.now(), split:"part1"};
+    const part2 = {id:newId(), type, desc, startMin: 0, endMin: endMin, money: 0, createdAt: Date.now(), split:"part2"};
+    const groupId = newId();
+    part1.groupId = groupId; part2.groupId = groupId;
+    return [{keyOffset:0, event:part1},{keyOffset:1, event:part2}];
+  }
+
+  function validate15(min){
+    return min % SLOT_MIN === 0;
+  }
+
+  function addEntry(){
+    const type = el("type").value;
+    const desc = (el("desc").value || "").trim();
+    const st = el("startTime").value;
+    const et = el("endTime").value;
+    const moneyRaw = el("money").value;
+    const money = moneyRaw === "" ? 0 : Number(moneyRaw);
+
+    const startMin = parseTimeToMin(st);
+    const endMin = parseTimeToMin(et);
+
+    if(startMin === null || endMin === null){
+      showToast("Время должно быть в формате HH:MM");
+      return;
+    }
+    if(startMin === endMin){
+      showToast("Интервал не может быть нулевым");
+      return;
+    }
+    if(!validate15(startMin) || !validate15(endMin)){
+      showToast("Шаг должен быть 15 минут (поставь ровное время)");
+      return;
+    }
+    if(Number.isNaN(money)){
+      showToast("Деньги должны быть числом (можно пусто)");
+      return;
+    }
+
+    const chunks = splitIfCrossMidnight(type, desc, startMin, endMin, money);
+    const baseKey = app.selectedDate;
+
+    for(const ch of chunks){
+      const key = addDays(baseKey, ch.keyOffset);
+      ensureDay(key);
+      const s = Math.max(0, Math.min(1440, ch.event.startMin));
+      const e = Math.max(0, Math.min(1440, ch.event.endMin));
+      if(hasOverlap(key, s, e)){
+        showToast("Ошибка: интервал пересекается с уже заполненным временем");
+        return;
+      }
+      app.state.days[key].events.push(ch.event);
+    }
+
+    // Reset fields after add
+    el("money").value = "";
+    el("desc").value = "";
+    save();
+    render();
+    refreshTimeOptions();
+    showToast("Запись добавлена", "ok");
+  }
+
+  function deleteEntry(id, dayKey){
+    ensureDay(dayKey);
+    const d = app.state.days[dayKey];
+    const idx = d.events.findIndex(e => e.id === id);
+    if(idx >= 0){
+      const ev = d.events[idx];
+      d.events.splice(idx,1);
+      // If part of split group, delete the pair too
+      if(ev.groupId){
+        for(const k of [dayKey, addDays(dayKey, -1), addDays(dayKey, 1)]){
+          if(app.state.days[k]){
+            app.state.days[k].events = app.state.days[k].events.filter(x => x.groupId !== ev.groupId);
+          }
+        }
+      }
+      save();
+      refreshTimeOptions();
+      render();
+    }
+  }
+
+  function clearDay(){
+    if(!confirm("Очистить все записи за выбранный день?")) return;
+    ensureDay(app.selectedDate);
+    app.state.days[app.selectedDate].events = [];
+    save();
+    // modal wiring
+    const overlay = document.getElementById("modalOverlay");
+    document.getElementById("modalCloseBtn").addEventListener("click", closeEditModal);
+    document.getElementById("modalCancelBtn").addEventListener("click", closeEditModal);
+    document.getElementById("modalSaveBtn").addEventListener("click", saveEdit);
+    overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeEditModal(); });
+    // edit type picker
+    const ep = document.getElementById("editTypePicker");
+    if(ep){
+      ep.addEventListener("click", (ev)=>{
+        const btn = ev.target.closest(".type-btn");
+        if(!btn) return;
+        setEditType(btn.dataset.type);
+      });
+    }
+
+    render();
+  }
+
+  function copyYesterday(){
+    const yKey = addDays(app.selectedDate, -1);
+    if(!app.state.days[yKey] || !app.state.days[yKey].events.length){
+      showToast("Вчера нет записей");
+      return;
+    }
+    if(!confirm("Скопировать вчерашние записи в сегодня? (Можно потом удалить лишнее)")) return;
+
+    ensureDay(app.selectedDate);
+    const src = app.state.days[yKey].events;
+    const dst = app.state.days[app.selectedDate].events;
+
+    // Copy only BIO by default (сон/еда/восстановление), чтобы не тянуть мусор
+    const copied = src.filter(e => e.type === "bio").map(e => ({
+      ...e,
+      id: newId(),
+      createdAt: Date.now(),
+      money: 0
+    }));
+    dst.push(...copied);
+    save();
+    render();
+    showToast("Скопировано: биовремя из вчера", "ok");
+  }
+
+  function exportJSON(){
+    const blob = new Blob([JSON.stringify(app.state, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    const ts = new Date().toISOString().slice(0,10);
+    a.href = URL.createObjectURL(blob);
+    a.download = `vremya_freedom_${ts}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1500);
+  }
+
+  function importJSON(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const obj = JSON.parse(reader.result);
+        if(!obj || typeof obj !== "object" || !obj.days){
+          showToast("Файл не похож на данные трекера");
+          return;
+        }
+        app.state = obj;
+        if(!app.state.settings) app.state.settings = {theme:"light"};
+        save();
+        applyTheme(app.state.settings.theme || "light");
+        render();
+        showToast("Импорт завершён", "ok");
+      }catch(e){
+        showToast("Не удалось импортировать: неверный JSON");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function buildSlotsForDay(dayKey){
+    const slots = Array.from({length:SLOTS_PER_DAY}, ()=>({type:null}));
+    const d = app.state.days[dayKey];
+    if(!d || !d.events) return {slots, byType: {slave:0,waste:0,bio:0,mine:0}};
+    for(const ev of d.events){
+      const s = Math.max(0, Math.min(1440, ev.startMin));
+      const e = Math.max(0, Math.min(1440, ev.endMin));
+      for(let m = s; m < e; m += SLOT_MIN){
+        const i = Math.floor(m / SLOT_MIN);
+        if(i < 0 || i >= SLOTS_PER_DAY) continue;
+        if(slots[i].type === null) slots[i].type = ev.type;
+      }
+    }
+    const byType = {slave:0,waste:0,bio:0,mine:0};
+    for(const c of slots){
+      if(c.type) byType[c.type] += SLOT_MIN;
+    }
+    return {slots, byType};
+  }
+
+  function renderTimeline(slots){
+    const tl = el("timeline");
+    tl.innerHTML = "";
+    for(let i=0;i<slots.length;i++){
+      const c = document.createElement("div");
+      c.className = "cell";
+      const s = slots[i];
+      if(s.type){
+        c.classList.add("c-" + s.type);
+      }else{
+        c.title = "Пусто";
+      }
+      if(i % 4 === 0){
+        c.style.height = "24px";
+      }
+      tl.appendChild(c);
+    }
+  }
+
+  function renderEntries(dayKey){
+    ensureDay(dayKey);
+    const d = app.state.days[dayKey];
+    const list = el("entries");
+    const hint = el("noEntriesHint");
+    list.innerHTML = "";
+
+    const events = [...(d.events||[])].sort((a,b)=> (a.startMin-b.startMin) || (a.createdAt-b.createdAt));
+    if(!events.length){
+      hint.style.display = "block";
+      return;
+    }
+    hint.style.display = "none";
+
+    for(const ev of events){
+      const dur = (ev.endMin - ev.startMin + 1440) % 1440; // safe
+      const wrap = document.createElement("div");
+      wrap.className = "entry";
+
+      const typeLabel = ev.type === "slave" ? "Рабское" : ev.type === "waste" ? "Слитое" : ev.type === "bio" ? "Био" : "МОЁ";
+      const money = Number(ev.money||0);
+
+      wrap.innerHTML = `
+        <div class="left">
+          <div class="title">${(ev.desc && ev.desc.length)? escapeHtml(ev.desc) : typeLabel}</div>
+          <div class="meta">
+            <span class="chip"><span class="dot" style="background:${typeColor(ev.type)}"></span>${typeLabel}</span>
+            <span class="chip">⏱ ${minToTime(ev.startMin)}–${minToTime(ev.endMin%1440)} • ${fmtHours(dur)}</span>
+            ${money ? `<span class="chip ${money>0?'money-pos':'money-neg'}">${fmtRub(money)}</span>` : `<span class="chip muted">₽ —</span>`}
+            ${ev.split ? `<span class="chip muted">${ev.split==="part1" ? "↪︎ до 24:00" : "↪︎ после 00:00"}</span>` : ``}
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;"><button class="btn small" title="Редактировать">Редактировать</button><button class="btn small danger" title="Удалить">Удалить</button></div>
+        </div>
+      `;
+      const btns = wrap.querySelectorAll("button");
+      if(btns[0]) btns[0].addEventListener("click", ()=>openEditModal(dayKey, ev.id));
+      if(btns[1]) btns[1].addEventListener("click", ()=>deleteEntry(ev.id, dayKey));
+      list.appendChild(wrap);
+    }
+  }
+
+  function escapeHtml(str){
+    return str.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));
+  }
+  function typeColor(type){
+    const css = getComputedStyle(document.documentElement);
+    const map = {
+      slave: css.getPropertyValue("--slave").trim(),
+      waste: css.getPropertyValue("--waste").trim(),
+      bio: css.getPropertyValue("--bio").trim(),
+      mine: css.getPropertyValue("--mine").trim(),
+      conflict: css.getPropertyValue("--conflict").trim(),
+    };
+    return map[type] || "#94a3b8";
+  }
+
+  function renderKPIs(byType){
+    const totalMarked = byType.slave + byType.waste + byType.bio + byType.mine;
+    const pct = Math.round((totalMarked/1440)*100);
+    el("dayPercent").textContent = `${pct}% дня отмечено`;
+
+    const map = [
+      ["kpiSlave", "kpiSlaveSub", byType.slave],
+      ["kpiWaste", "kpiWasteSub", byType.waste],
+      ["kpiBio", "kpiBioSub", byType.bio],
+      ["kpiMine", "kpiMineSub", byType.mine],
+    ];
+    for(const [valId, subId, minutes] of map){
+      el(valId).textContent = fmtHours(minutes);
+      el(subId).textContent = `${Math.round((minutes/1440)*100)}% дня`;
+    }
+
+    el("bannerMain").textContent = `Сегодня: ${(byType.mine/60).toFixed(1)}ч МОЕГО времени`;
+  }
+
+  function renderMoney(dayKey, byType){
+    ensureDay(dayKey);
+    const events = app.state.days[dayKey].events || [];
+    let earned = 0, spent = 0, net = 0;
+    for(const e of events){
+      const m = Number(e.money||0);
+      net += m;
+      if(m > 0) earned += m;
+      if(m < 0) spent += Math.abs(m);
+    }
+    el("moneyEarned").textContent = "+" + Math.round(earned).toLocaleString('ru-RU') + "₽";
+    el("moneySpent").textContent = "-" + Math.round(spent).toLocaleString('ru-RU') + "₽";
+    el("moneyNet").textContent = (net>=0?"+":"") + Math.round(net).toLocaleString('ru-RU') + "₽";
+
+    const slaveHours = byType.slave/60;
+    let chdch = null;
+    if(slaveHours > 0){
+      chdch = net / slaveHours;
+      el("chdch").textContent = Math.round(chdch).toLocaleString('ru-RU') + "₽/ч";
+      el("lifeHour").textContent = Math.round(chdch).toLocaleString('ru-RU') + "₽/ч";
+    }else{
+      el("chdch").textContent = "—";
+      el("lifeHour").textContent = "0₽/ч";
+    }
+
+    const wasteHours = byType.waste/60;
+    const cost = chdch ? wasteHours * chdch : 0;
+    el("wasteCost").textContent = Math.round(cost).toLocaleString('ru-RU') + "₽";
+  }
+
+  function renderWeekly(endKey){
+    const wrap = el("weekly");
+    wrap.innerHTML = "";
+    const keys = [];
+    for(let i=6;i>=0;i--){
+      keys.push(addDays(endKey, -i));
+    }
+    for(const k of keys){
+      const {byType} = buildSlotsForDay(k);
+      const total = byType.slave+byType.waste+byType.bio+byType.mine;
+      const day = keyToDate(k);
+      const lbl = day.toLocaleDateString('ru-RU', {weekday:'short'}).replace('.', '');
+      const stack = document.createElement("div");
+      stack.className = "daybar";
+      const inner = document.createElement("div");
+      inner.className = "stack";
+
+      const h = 140; // px
+      const scale = (min) => total ? Math.max(1, Math.round((min/total)*h)) : 0;
+
+      // segments (bottom-up)
+      const segs = [
+        ["mine", byType.mine],
+        ["bio", byType.bio],
+        ["waste", byType.waste],
+        ["slave", byType.slave],
+      ];
+      for(const [t, m] of segs){
+        if(m<=0) continue;
+        const div = document.createElement("div");
+        div.className = "seg " + t;
+        div.style.height = `${Math.max(2, Math.round((m/1440)*h))}px`;
+        inner.appendChild(div);
+      }
+
+      stack.appendChild(inner);
+      const l = document.createElement("div");
+      l.className = "lbl";
+      l.textContent = lbl;
+      const s = document.createElement("div");
+      s.className = "sum";
+      s.textContent = (byType.mine/60).toFixed(1) + "ч";
+      s.title = "МОЁ время за день";
+
+      stack.appendChild(l);
+      stack.appendChild(s);
+      wrap.appendChild(stack);
+    }
+  }
+
+  function applyTheme(theme){
+    document.documentElement.dataset.theme = theme;
+    app.state.settings.theme = theme;
+    save();
+    // button icon
+    el("themeBtn").textContent = theme === "dark" ? "🌙" : "🌞";
+  }
+
+
+  function getLastEndMin(dayKey){
+    ensureDay(dayKey);
+    const events = app.state.days[dayKey].events || [];
+    if(!events.length) return 0;
+    let maxEnd = 0;
+    for(const e of events){
+      const end = Math.max(0, Math.min(1440, e.endMin));
+      if(end > maxEnd) maxEnd = end;
+    }
+    // round to 15 min just in case
+    return Math.round(maxEnd / SLOT_MIN) * SLOT_MIN;
+  }
+
+  function buildTimeOptions(selectEl, startMin, endMin, includeEnd){
+    // startMin inclusive, endMin exclusive unless includeEnd=true
+    selectEl.innerHTML = "";
+    const last = includeEnd ? endMin : (endMin - SLOT_MIN);
+    for(let m = startMin; m <= last; m += SLOT_MIN){
+      const opt = document.createElement("option");
+      opt.value = minToTime(m % 1440);
+      opt.textContent = minToTime(m % 1440);
+      selectEl.appendChild(opt);
+    }
+  }
+
+  function refreshTimeOptions(){
+    const startSel = el("startTime");
+    const endSel = el("endTime");
+    if(!startSel || !endSel) return;
+
+    const lastEnd = getLastEndMin(app.selectedDate);
+
+    // If day is filled to the end, disable adding
+    if(lastEnd >= 1440){
+      startSel.innerHTML = '<option value="00:00">00:00</option>';
+      endSel.innerHTML = '<option value="00:00">00:00</option>';
+      startSel.disabled = true;
+      endSel.disabled = true;
+      const addBtn = el("addBtn");
+      addBtn.disabled = true;
+      addBtn.style.opacity = "0.55";
+      addBtn.textContent = "День заполнен до 24:00";
+      return;
+    }
+
+    startSel.disabled = false;
+    endSel.disabled = false;
+    const addBtn = el("addBtn");
+    addBtn.disabled = false;
+    addBtn.style.opacity = "1";
+    addBtn.textContent = "+ Добавить запись";
+
+    // Start times: only from lastEnd to 23:45
+    buildTimeOptions(startSel, lastEnd, 1440, false);
+    startSel.value = minToTime(lastEnd);
+
+    // End times depend on start
+    const startMin = parseTimeToMin(startSel.value);
+    const minEnd = Math.min(startMin + SLOT_MIN, 1440);
+    buildTimeOptions(endSel, minEnd, 1440, true);
+
+    // Default end: +60min if possible, else to 24:00
+    const suggested = Math.min(startMin + 60, 1440);
+    endSel.value = minToTime(suggested);
+
+    // If suggested isn't available (e.g. close to end), snap to last option
+    if(endSel.value !== minToTime(suggested)){
+      endSel.selectedIndex = endSel.options.length - 1;
+    }
+  }
+
+  function refreshEndOptionsFromStart(){
+    const startSel = el("startTime");
+    const endSel = el("endTime");
+    const startMin = parseTimeToMin(startSel.value);
+    const minEnd = Math.min(startMin + SLOT_MIN, 1440);
+    buildTimeOptions(endSel, minEnd, 1440, true);
+    const suggested = Math.min(startMin + 60, 1440);
+    endSel.value = minToTime(suggested);
+    if(endSel.value !== minToTime(suggested)){
+      endSel.selectedIndex = endSel.options.length - 1;
+    }
+  }
+
+
+  // ---------- Editing ----------
+  const EDIT_TIME_OPTS = (function(){
+    const arr = [];
+    for(let m=0; m<1440; m+=SLOT_MIN) arr.push(m);
+    return arr;
+  })();
+
+  const editState = { dayKey: null, eventId: null };
+
+  function fillEditTimeSelects(){
+    const s = document.getElementById("editStart");
+    const e = document.getElementById("editEnd");
+    s.innerHTML = "";
+    e.innerHTML = "";
+    for(const m of EDIT_TIME_OPTS){
+      const opt1 = document.createElement("option");
+      opt1.value = minToTime(m);
+      opt1.textContent = minToTime(m);
+      s.appendChild(opt1);
+
+      const opt2 = document.createElement("option");
+      opt2.value = minToTime(m);
+      opt2.textContent = minToTime(m);
+      e.appendChild(opt2);
+    }
+  }
+
+  function setEditType(t){
+    const hidden = document.getElementById("editType");
+    if(hidden) hidden.value = t;
+    const picker = document.getElementById("editTypePicker");
+    if(picker){
+      [...picker.querySelectorAll(".type-btn")].forEach(b=>b.classList.toggle("active", b.dataset.type===t));
+    }
+  }
+
+  function openEditModal(dayKey, eventId){
+    ensureDay(dayKey);
+    const d = app.state.days[dayKey];
+    const ev = (d.events||[]).find(x=>x.id===eventId);
+    if(!ev) return;
+
+    if(ev.groupId){
+      showToast("Интервалы через 00:00 пока редактируются через удалить+добавить");
+      return;
+    }
+
+    editState.dayKey = dayKey;
+    editState.eventId = eventId;
+
+    fillEditTimeSelects();
+
+    setEditType(ev.type);
+    document.getElementById("editDesc").value = ev.desc || "";
+    document.getElementById("editMoney").value = (ev.money && ev.money !== 0) ? ev.money : "";
+    document.getElementById("editStart").value = minToTime(ev.startMin % 1440);
+    document.getElementById("editEnd").value = minToTime(ev.endMin % 1440);
+
+    document.getElementById("modalHint").textContent = "После сохранения шкала дня обновится автоматически.";
+
+    document.getElementById("modalOverlay").style.display = "flex";
+  }
+
+  function closeEditModal(){
+    document.getElementById("modalOverlay").style.display = "none";
+    editState.dayKey = null;
+    editState.eventId = null;
+  }
+
+  function hasOverlapExcept(dayKey, startMin, endMin, skipId){
+    const d = app.state.days[dayKey];
+    if(!d || !d.events) return false;
+    for(const ev of d.events){
+      if(ev.id === skipId) continue;
+      const s = Math.max(0, Math.min(1440, ev.startMin));
+      const e = Math.max(0, Math.min(1440, ev.endMin));
+      if(overlaps(startMin, endMin, s, e)) return true;
+    }
+    return false;
+  }
+
+  function saveEdit(){
+    const dayKey = editState.dayKey;
+    const eventId = editState.eventId;
+    if(!dayKey || !eventId) return;
+
+    ensureDay(dayKey);
+    const d = app.state.days[dayKey];
+    const ev = (d.events||[]).find(x=>x.id===eventId);
+    if(!ev) return;
+
+    const type = document.getElementById("editType").value;
+    const desc = (document.getElementById("editDesc").value || "").trim();
+    const moneyRaw = document.getElementById("editMoney").value;
+    const money = moneyRaw === "" ? 0 : Number(moneyRaw);
+
+    const startMin = parseTimeToMin(document.getElementById("editStart").value);
+    const endMin = parseTimeToMin(document.getElementById("editEnd").value);
+
+    if(startMin === null || endMin === null){ showToast("Время должно быть HH:MM"); return; }
+    if(startMin === endMin){ showToast("Интервал не может быть нулевым"); return; }
+    if(!validate15(startMin) || !validate15(endMin)){ showToast("Шаг 15 минут"); return; }
+    if(Number.isNaN(money)){ showToast("Деньги должны быть числом"); return; }
+    if(endMin < startMin){ showToast("Редактирование через 00:00: пока удали и добавь заново"); return; }
+
+    if(hasOverlapExcept(dayKey, startMin, endMin, eventId)){
+      showToast("Ошибка: интервал пересекается с уже заполненным временем");
+      return;
+    }
+
+    ev.type = type;
+    ev.desc = desc;
+    ev.money = money;
+    ev.startMin = startMin;
+    ev.endMin = endMin;
+
+    save();
+    render();
+    refreshTimeOptions();
+    closeEditModal();
+    showToast("Сохранено", "ok");
+  }
+  function render(){
+    const dayKey = app.selectedDate;
+    ensureDay(dayKey);
+
+    const {slots, byType} = buildSlotsForDay(dayKey);
+    renderTimeline(slots);
+    renderKPIs(byType);
+    renderEntries(dayKey);
+    renderMoney(dayKey, byType);
+    renderWeekly(dayKey);
+  }
+
+  function init(){
+    app.state = load();
+    const theme = app.state.settings.theme || "light";
+    applyTheme(theme);
+
+    app.selectedDate = todayKey();
+    el("datePicker").value = app.selectedDate;
+
+    el("datePicker").addEventListener("change", (e)=>{
+      app.selectedDate = e.target.value || todayKey();
+      render();
+    });
+
+    el("addBtn").addEventListener("click", addEntry);
+    el("clearDayBtn").addEventListener("click", clearDay);
+    el("copyYesterdayBtn").addEventListener("click", copyYesterday);
+
+    el("exportBtn").addEventListener("click", exportJSON);
+    el("importInput").addEventListener("change", (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(f) importJSON(f);
+      e.target.value = "";
+    });
+
+    el("themeBtn").addEventListener("click", ()=>{
+      const next = (document.documentElement.dataset.theme === "dark") ? "light" : "dark";
+      applyTheme(next);
+      render();
+    });
+
+    // time selects: only from the last filled end-time onward
+    refreshTimeOptions();
+    el("startTime").addEventListener("change", refreshEndOptionsFromStart);
+
+    // type picker
+    const picker = document.getElementById("typePicker");
+    if(picker){
+      picker.addEventListener("click", (ev)=>{
+        const btn = ev.target.closest(".type-btn");
+        if(!btn) return;
+        const t = btn.dataset.type;
+        document.getElementById("type").value = t;
+        [...picker.querySelectorAll(".type-btn")].forEach(b=>b.classList.toggle("active", b===btn));
+        const desc = document.getElementById("desc");
+        if(desc) desc.value = "";
+      });
+    }
+
+    render();
+  }
+
+  init();
+})();
+</script>
+
+<script>
+  // PWA: service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+    });
+  }
+</script>
+
+</body>
+</html>
