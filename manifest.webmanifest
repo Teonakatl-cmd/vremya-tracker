@@ -1,0 +1,16 @@
+{
+  "name": "ВРЕМЯ — Мой трекер свободы",
+  "short_name": "ВРЕМЯ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#667eea",
+  "description": "Трекер времени (Рабское/Слитое/Био/МОЁ) + деньги и ЧД/Ч. Локальное хранение, офлайн-режим.",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
