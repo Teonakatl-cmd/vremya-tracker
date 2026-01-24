@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ВРЕМЯ — Мой трекер свободы</title>
+  <title>ВРЕМЯ — Мой трекер свободы <span id="ver" style="font-weight:800;color:#64748b;">v8.2</span></title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%23667eea'/%3E%3Cstop%20offset='1'%20stop-color='%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx='32'%20cy='32'%20r='26'%20fill='url(%23g)'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='21'%20fill='white'/%3E%3Cpath%20d='M32%2018v15l10%206'%20stroke='%230f172a'%20stroke-width='4'%20stroke-linecap='round'%20stroke-linejoin='round'%20fill='none'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='2.5'%20fill='%230f172a'/%3E%3C/svg%3E">
 <style>
     :root{
@@ -360,6 +360,7 @@
           <input id="importInput" type="file" accept="application/json" style="display:none;">
         </label>
         <button class="btn small" id="themeBtn" title="Переключить тему">🌞</button>
+        <button class="btn small" id="versionBtn" title="Версия приложения">v8.2</button>
       </div>
     </header>
 <div class="panel">
@@ -416,10 +417,10 @@
         <div>
           <label class="muted" style="font-size:12px;">Категория</label>
           <div id="typePicker" class="type-picker" role="radiogroup" aria-label="Категория">
-            <button type="button" class="type-btn active" data-type="slave" onclick="setType('slave')"><span class="swatch" style="background: var(--slave)"></span>Рабское</button>
-            <button type="button" class="type-btn" data-type="waste" onclick="setType('waste')"><span class="swatch" style="background: var(--waste)"></span>Слитое</button>
-            <button type="button" class="type-btn" data-type="bio" onclick="setType('bio')"><span class="swatch" style="background: var(--bio)"></span>Био</button>
-            <button type="button" class="type-btn" data-type="mine" onclick="setType('mine')"><span class="swatch" style="background: var(--mine)"></span>МОЁ</button>
+            <button type="button" class="type-btn active" data-type="slave"><span class="swatch" style="background: var(--slave)"></span>Рабское</button>
+            <button type="button" class="type-btn" data-type="waste"><span class="swatch" style="background: var(--waste)"></span>Слитое</button>
+            <button type="button" class="type-btn" data-type="bio"><span class="swatch" style="background: var(--bio)"></span>Био</button>
+            <button type="button" class="type-btn" data-type="mine"><span class="swatch" style="background: var(--mine)"></span>МОЁ</button>
           </div>
           <input id="type" type="hidden" value="slave">
         </div>
@@ -530,22 +531,22 @@
     
 </div>
     <!-- Edit modal -->
-    <div id="modalOverlay" style="position:fixed; inset:0; background: rgba(15,23,42,0.45); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 9999;">
+    <div id="modalOverlay" style="position:fixed; inset:0; background: rgba(15,23,42,0.45); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 99999;">
       <div id="modal" style="width:min(720px, 100%); background: var(--panel); border:1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 16px;">
         <div class="row-between" style="margin-bottom: 10px;">
           <h3 style="margin:0;">Редактировать запись</h3>
-          <button class="btn small" id="modalCloseBtn">✕</button>
+          <button class="btn small" id="modalCloseBtn" onclick="window.__closeEdit && window.__closeEdit(event)">✕</button>
         </div>
 
         <div class="grid-2">
           <div>
             <label class="muted" style="font-size:12px;">Категория</label>
             <div id="editTypePicker" class="type-picker" role="radiogroup" aria-label="Категория">
-              <button type="button" class="type-btn" data-type="slave"><span class="swatch" style="background: var(--slave)"></span>Рабское</button>
-              <button type="button" class="type-btn" data-type="waste"><span class="swatch" style="background: var(--waste)"></span>Слитое</button>
-              <button type="button" class="type-btn" data-type="bio"><span class="swatch" style="background: var(--bio)"></span>Био</button>
-              <button type="button" class="type-btn" data-type="mine"><span class="swatch" style="background: var(--mine)"></span>МОЁ</button>
-            </div>
+            <button type="button" class="type-btn" data-type="slave"><span class="swatch" style="background: var(--slave)"></span>Рабское</button>
+            <button type="button" class="type-btn" data-type="waste"><span class="swatch" style="background: var(--waste)"></span>Слитое</button>
+            <button type="button" class="type-btn" data-type="bio"><span class="swatch" style="background: var(--bio)"></span>Био</button>
+            <button type="button" class="type-btn" data-type="mine"><span class="swatch" style="background: var(--mine)"></span>МОЁ</button>
+          </div>
             <input id="editType" type="hidden" value="slave">
           </div>
           <div>
@@ -570,8 +571,8 @@
         </div>
 
         <div style="display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap;">
-          <button class="btn primary" id="modalSaveBtn" style="flex:1 1 220px;">Сохранить</button>
-          <button class="btn" id="modalCancelBtn" style="flex:1 1 220px;">Отмена</button>
+          <button class="btn primary" id="modalSaveBtn" onclick="window.__saveEdit && window.__saveEdit(event)" style="flex:1 1 220px;">Сохранить</button>
+          <button class="btn" id="modalCancelBtn" onclick="window.__closeEdit && window.__closeEdit(event)" style="flex:1 1 220px;">Отмена</button>
         </div>
 
         <div class="hint" id="modalHint" style="margin-top: 10px;"></div>
@@ -769,6 +770,7 @@
     save();
     render();
     refreshTimeOptions();
+    manualStartMin = null;
     showToast("Запись добавлена", "ok");
   }
 
@@ -813,6 +815,8 @@
         setEditType(btn.dataset.type);
       });
     }
+
+    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeEditModal(); });
 
     render();
   }
@@ -1112,9 +1116,10 @@
     if(!startSel || !endSel) return;
 
     const lastEnd = getLastEndMin(app.selectedDate);
+    const baseStart = (manualStartMin !== null) ? manualStartMin : lastEnd;
 
-    // If day is filled to the end, disable adding
-    if(lastEnd >= 1440){
+    // full day (only if not inserting)
+    if(lastEnd >= 1440 && manualStartMin === null){
       startSel.innerHTML = '<option value="00:00">00:00</option>';
       endSel.innerHTML = '<option value="00:00">00:00</option>';
       startSel.disabled = true;
@@ -1133,31 +1138,21 @@
     addBtn.style.opacity = "1";
     addBtn.textContent = "+ Добавить запись";
 
-    // Start times: only from lastEnd to 23:45
-    buildTimeOptions(startSel, lastEnd, 1440, false);
-    startSel.value = minToTime(lastEnd);
+    // Start: short list from baseStart
+    buildTimeOptions(startSel, baseStart, 1440, false);
+    startSel.value = minToTime(baseStart);
 
-    // End times depend on start
-    const startMin = parseTimeToMin(startSel.value);
-    const minEnd = Math.min(startMin + SLOT_MIN, 1440);
-    buildTimeOptions(endSel, minEnd, 1440, true);
-
-    // Default end: +60min if possible, else to 24:00
-    const suggested = Math.min(startMin + 60, 1440);
-    endSel.value = minToTime(suggested);
-
-    // If suggested isn't available (e.g. close to end), snap to last option
-    if(endSel.value !== minToTime(suggested)){
-      endSel.selectedIndex = endSel.options.length - 1;
-    }
+    refreshEndOptionsFromStart();
   }
 
   function refreshEndOptionsFromStart(){
     const startSel = el("startTime");
     const endSel = el("endTime");
     const startMin = parseTimeToMin(startSel.value);
+
     const minEnd = Math.min(startMin + SLOT_MIN, 1440);
     buildTimeOptions(endSel, minEnd, 1440, true);
+
     const suggested = Math.min(startMin + 60, 1440);
     endSel.value = minToTime(suggested);
     if(endSel.value !== minToTime(suggested)){
@@ -1286,6 +1281,7 @@
     render();
     refreshTimeOptions();
     closeEditModal();
+    manualStartMin = null;
     showToast("Сохранено", "ok");
   }
   function render(){
@@ -1310,6 +1306,7 @@
 
     el("datePicker").addEventListener("change", (e)=>{
       app.selectedDate = e.target.value || todayKey();
+      manualStartMin = null;
       render();
     });
 
@@ -1334,6 +1331,21 @@
     refreshTimeOptions();
     el("startTime").addEventListener("change", refreshEndOptionsFromStart);
 
+    // click on timeline to set a specific start slot (for backfilling)
+    const tl = document.getElementById("timeline");
+    if(tl){
+      tl.addEventListener("click", (e)=>{
+        const cell = e.target.closest(".cell");
+        if(!cell) return;
+        const idx = Array.prototype.indexOf.call(tl.children, cell);
+        if(idx < 0) return;
+        manualStartMin = idx * SLOT_MIN;
+        refreshTimeOptions();
+        try{ document.getElementById("addBtn")?.scrollIntoView({behavior:"smooth", block:"center"}); }catch(_e){}
+      });
+    }
+
+
     // type picker
     const picker = document.getElementById("typePicker");
     if(picker){
@@ -1351,17 +1363,164 @@
     render();
   }
 
-  init();
+  try{ init(); }catch(e){ try{ console.error(e); }catch(_){ } try{ showToast('Ошибка приложения. Обнови страницу.'); }catch(_){ } }
 })();
 </script>
 
+<!-- About / Version modal -->
+<div id="aboutOverlay" style="position:fixed; inset:0; background: rgba(15,23,42,0.45); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 99998;">
+  <div style="width:min(560px, 100%); background: var(--panel); border:1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 16px;">
+    <div class="row-between" style="margin-bottom: 10px;">
+      <div>
+        <h3 style="margin:0;">ВРЕМЯ — версия</h3>
+        <div class="muted" id="aboutVersionLine">v8.2</div>
+      </div>
+      <button class="btn small" id="aboutCloseBtn">✕</button>
+    </div>
+    <div class="divider"></div>
+    <div class="hint" id="aboutDetails" style="white-space:pre-line;"></div>
+    <div style="display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap;">
+      <button class="btn" id="checkUpdateBtn" style="flex:1 1 220px;">Проверить обновление</button>
+      <button class="btn primary" id="applyUpdateBtn" style="flex:1 1 220px; display:none;">Обновить сейчас</button>
+    </div>
+    <div class="hint" id="updateHint" style="margin-top: 10px;"></div>
+  </div>
+</div>
+
 <script>
-  // PWA: service worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+// Version + auto-update
+(function(){
+  const APP_VERSION = "8.2";
+  const BUILD_DATE = "2026-01-24";
+  const CACHE_NAME = "vremya-cache-v8-2";
+
+  const qs = (id) => document.getElementById(id);
+  const versionBtn = qs("versionBtn");
+  const aboutOverlay = qs("aboutOverlay");
+  const aboutCloseBtn = qs("aboutCloseBtn");
+  const aboutDetails = qs("aboutDetails");
+  const aboutVersionLine = qs("aboutVersionLine");
+  const checkUpdateBtn = qs("checkUpdateBtn");
+  const applyUpdateBtn = qs("applyUpdateBtn");
+  const updateHint = qs("updateHint");
+
+  let reg = null;
+  let waitingWorker = null;
+
+  function renderUpdateUI(){
+    const hasUpdate = !!waitingWorker;
+    if (applyUpdateBtn) applyUpdateBtn.style.display = hasUpdate ? "block" : "none";
+    if (updateHint) {
+      updateHint.textContent = hasUpdate
+        ? "Доступно обновление. Нажми «Обновить сейчас» — приложение перезагрузится и подтянет новую версию."
+        : "Обновлений пока нет.";
+    }
+  }
+
+  function openAbout(){
+    if (!aboutOverlay) return;
+    if (aboutVersionLine) aboutVersionLine.textContent = "v" + APP_VERSION;
+
+    const isStandalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+    const ua = navigator.userAgent || "";
+
+    if (aboutDetails){
+      aboutDetails.textContent =
+        "Версия: v" + APP_VERSION + "
+" +
+        "Сборка: " + BUILD_DATE + "
+" +
+        "Кэш: " + CACHE_NAME + "
+" +
+        "Режим: " + (isStandalone ? "standalone" : "browser") + "
+" +
+        "UA: " + ua;
+    }
+
+    aboutOverlay.style.display = "flex";
+    renderUpdateUI();
+  }
+
+  function closeAbout(){
+    if (!aboutOverlay) return;
+    aboutOverlay.style.display = "none";
+  }
+
+  async function checkForUpdate(){
+    try{
+      if (reg) await reg.update();
+      setTimeout(() => {
+        if (reg && reg.waiting){
+          waitingWorker = reg.waiting;
+        } else {
+          waitingWorker = null;
+        }
+        renderUpdateUI();
+        try{ window.showToast && window.showToast(waitingWorker ? "Доступно обновление" : "Обновлений нет"); }catch(e){}
+      }, 250);
+    } catch(e){
+      try{ window.showToast && window.showToast("Не удалось проверить обновление"); }catch(_e){}
+    }
+  }
+
+  function applyUpdate(){
+    if (!waitingWorker) return;
+    try{
+      waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    }catch(e){}
+  }
+
+  function onUpdateFound(){
+    if (!reg) return;
+    const newWorker = reg.installing;
+    if (!newWorker) return;
+
+    newWorker.addEventListener("statechange", () => {
+      if (newWorker.state === "installed"){
+        if (navigator.serviceWorker.controller){
+          waitingWorker = reg.waiting || newWorker;
+          renderUpdateUI();
+          try{ window.showToast && window.showToast("Есть обновление. Нажми v" + APP_VERSION + " → «Обновить сейчас»."); }catch(e){}
+        }
+      }
     });
   }
+
+  async function registerSW(){
+    if (!("serviceWorker" in navigator)) return;
+    try{
+      reg = await navigator.serviceWorker.register("./service-worker.js");
+      if (reg.waiting) waitingWorker = reg.waiting;
+
+      reg.addEventListener("updatefound", onUpdateFound);
+
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (window.__reloadedOnce) return;
+        window.__reloadedOnce = true;
+        window.location.reload();
+      });
+
+      // автопроверка обновлений раз в 30 минут
+      setInterval(() => {
+        try{ reg && reg.update(); }catch(e){}
+      }, 30 * 60 * 1000);
+
+      // тихая проверка вскоре после старта
+      setTimeout(() => { try{ reg && reg.update(); }catch(e){} }, 800);
+    } catch(e){}
+  }
+
+  // UI wiring
+  if (versionBtn) versionBtn.addEventListener("click", openAbout);
+  if (aboutCloseBtn) aboutCloseBtn.addEventListener("click", closeAbout);
+  if (aboutOverlay) aboutOverlay.addEventListener("click", (e) => {
+    if (e.target === aboutOverlay) closeAbout();
+  });
+  if (checkUpdateBtn) checkUpdateBtn.addEventListener("click", checkForUpdate);
+  if (applyUpdateBtn) applyUpdateBtn.addEventListener("click", applyUpdate);
+
+  window.addEventListener("load", () => { registerSW(); });
+})();
 </script>
 
 </body>

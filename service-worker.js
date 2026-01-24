@@ -1,5 +1,5 @@
 /* PWA service worker: ВРЕМЯ */
-const CACHE = "vremya-cache-v1";
+const CACHE = "vremya-cache-v8-2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -55,4 +55,11 @@ self.addEventListener("fetch", (event) => {
       return res;
     }))
   );
+});
+
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
